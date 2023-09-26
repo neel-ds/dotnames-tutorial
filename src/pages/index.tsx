@@ -2,14 +2,15 @@ import Image from "next/image";
 import { useState } from "react";
 import { SoWsdk } from "sow-sdk";
 import { SupportedChains } from "sow-sdk/dist/types";
-
+import { detectNameService } from "sow-sdk/dist/utils/detectNameService";
 export default function Home() {
   const [walletAddress, setWalletAddress] = useState("");
   const [domainName, setDomainName] = useState("");
   const [result, setResult] = useState("");
   const [selectedChain, setSelectedChain] = useState();
   const [chain, setChain] = useState(1);
-
+  const [explorerLink, setExplorerLink] = useState("");
+  const [loading, setLoading] = useState(false);
   // Event handler to update the selected chain
   const handleChainChange = (event: any) => {
     setSelectedChain(event.target.value);
@@ -85,15 +86,59 @@ export default function Home() {
         <button
           className="px-3 py-2 w-fit bg-[#f95b8b] rounded-lg"
           onClick={() => {
+            setLoading(true);
+            setExplorerLink("");
             const sow = new SoWsdk();
             sow
               .resolveAddress(domainName)
               .then((res) => {
                 console.log(res);
-                setResult("Address: " + res);
+                setResult(() => {
+                  detectNameService(domainName)
+                    .then((res2) => {
+                      console.log("chain", res2);
+
+                      switch (res2) {
+                        case 1:
+                          setExplorerLink(
+                            `https://etherscan.io/address/${res}`
+                          );
+                          break;
+                        case 5:
+                          setExplorerLink(
+                            `https://explorer.zksync.io/address/${res}`
+                          );
+                          break;
+                        case 9:
+                          setExplorerLink(
+                            `https://suiexplorer.com/address/${res}`
+                          );
+                          break;
+                        case 8:
+                          setExplorerLink(
+                            `https://explorer.solana.com/address/${res}`
+                          );
+                          break;
+                        case 10:
+                          setExplorerLink(
+                            `https://aptoscan.com/address/${res}`
+                          );
+                          break;
+                      }
+                    })
+                    .catch((err) => {
+                      console.log(err);
+                    });
+                  setTimeout(() => {
+                    setLoading(false);
+                  }, 1000);
+
+                  return "Address: " + res;
+                });
               })
               .catch((err) => {
                 console.log(err);
+                setLoading(false);
                 setResult("Error");
               });
           }}
@@ -114,7 +159,15 @@ export default function Home() {
           alt="copy"
         />
       </div>
-      <p className="text-lg">{result}</p>
+      <p className="text-lg">
+        {loading ? (
+          "loading..."
+        ) : (
+          <a className=" underline " target="blank" href={explorerLink}>
+            {result}
+          </a>
+        )}
+      </p>
     </main>
   );
 }
