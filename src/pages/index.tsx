@@ -57,16 +57,19 @@ export default function Home() {
         <button
           className="px-3 py-2 w-fit bg-[#f95b8b] rounded-lg"
           onClick={() => {
+            setLoading(true);
             const sow = new SoWsdk();
             sow
               .resolveName(walletAddress, chain)
               .then((res) => {
                 console.log(res);
                 setResult("Name Service: " + res);
+                setLoading(false);
               })
               .catch((err) => {
                 console.log(err);
                 setResult("Error");
+                setLoading(false);
               });
           }}
         >
@@ -102,6 +105,11 @@ export default function Home() {
                         case 1:
                           setExplorerLink(
                             `https://etherscan.io/address/${res}`
+                          );
+                          break;
+                        case 3:
+                          setExplorerLink(
+                            `https://polygonscan.com/address/${res}`
                           );
                           break;
                         case 5:
