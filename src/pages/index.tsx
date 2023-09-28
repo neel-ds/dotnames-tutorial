@@ -107,9 +107,17 @@ export default function Home() {
                             `https://etherscan.io/address/${res}`
                           );
                           break;
+                        case 2:
+                          setExplorerLink(`https://bscscan.com/address/${res}`);
+                          break;
                         case 3:
                           setExplorerLink(
                             `https://polygonscan.com/address/${res}`
+                          );
+                          break;
+                        case 4:
+                          setExplorerLink(
+                            `https://etherscan.io/address/${res}`
                           );
                           break;
                         case 5:
@@ -117,14 +125,19 @@ export default function Home() {
                             `https://explorer.zksync.io/address/${res}`
                           );
                           break;
-                        case 9:
+                        case 6:
                           setExplorerLink(
-                            `https://suiexplorer.com/address/${res}`
+                            `https://www.mintscan.io/cosmos/address/${res}`
                           );
                           break;
                         case 8:
                           setExplorerLink(
                             `https://explorer.solana.com/address/${res}`
+                          );
+                          break;
+                        case 9:
+                          setExplorerLink(
+                            `https://suiexplorer.com/address/${res}`
                           );
                           break;
                         case 10:
